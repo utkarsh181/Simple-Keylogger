@@ -5,7 +5,7 @@
 
 int main(void)
 {
-	#ifdef linux 
+	#ifdef linux
 
 	klinux();
 
@@ -14,7 +14,7 @@ int main(void)
 	kwindows();
 
 	#endif
-	
+
 	return 0;
 }
 
@@ -23,7 +23,7 @@ void format_time(char *time_variable)
 	/** C Program To print Time **/
    	time_t rawtime;
 
-  	struct tm * timeinfo;	
+  	struct tm * timeinfo;
 
 	time (&rawtime);
 
@@ -33,7 +33,7 @@ void format_time(char *time_variable)
 
 	strcat(time_variable,asctime(timeinfo));
 
-	/** https://stackoverflow.com/questions/5141960/get-the-current-time-in-c **/ 
+	/** https://stackoverflow.com/questions/5141960/get-the-current-time-in-c **/
 
 	int size = strlen(time_variable);
 
@@ -41,4 +41,3 @@ void format_time(char *time_variable)
 
 	strcat(time_variable ," Input:");
 }
-

