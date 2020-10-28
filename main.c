@@ -3,16 +3,6 @@
 #include<string.h>
 #include"keylogger.h"
 
-int main(void)
-{
-#ifdef linux
-  klinux();
-#elif WIN32
-  kwindows();
-#endif
-  return 0;
-}
-
 void format_time(char *time_variable)
 {
   time_t rawtime;
@@ -25,4 +15,14 @@ void format_time(char *time_variable)
   int size = strlen(time_variable);
   time_variable[size-1] = '\0';
   strcat(time_variable ," Input:");
+}
+
+int main(void)
+{
+#ifdef linux
+  klinux();
+#elif WIN32
+  kwindows();
+#endif
+  return 0;
 }
